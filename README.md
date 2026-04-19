@@ -1,61 +1,63 @@
 # Simple-RAG-chatbot
 
-![alt text](assets/chat_example.png)
+![alt text](docs/assets/chat_example.png)
 
 ## Table of Contents
 
 1. [About](#about)
-2. [Installation](#installation)
-3. [Usage](#usage)
-4. [How it works](#how-it-works)
+2. [Prerequisites](#prerequisites)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [How it works](#how-it-works)
     - [APIs & Functionality](#functionality)
     - [Database Simulation](#database)
     - [RAG Retrieval](#retrieval-augmented-generation)
     - [Language Model Integration](#language-model-integration)
     - [Modular Design](#modular-design)
-5. [Limitations & Trade-Offs](#limitations--trade-offs)
-6. [Development](#development)
+6. [Limitations & Trade-Offs](#limitations--trade-offs)
+7. [Development](#development)
     - [Testing](#testing)
 
 ## About
 
-A FastAPI backend with a server-rendered frontend (Jinja2) for an AI assistant that can perform contextual retrieval (RAG).
+FastAPI backend with server-side rendered UI (Jinja2 templates) and contextual retrieval (RAG) for an AI assistant.
 
-The project serves as a personal playground to explore end-to-end web application design and the integration of AI/ML into real-world applications, highlighting practical Python and AI/ML experience.
+An end-to-end FastAPI application integrating a server-rendered interface with a retrieval-augmented AI system (RAG), demonstrating practical experience in Python backend development and applied AI/ML systems design.
+
+## Prerequisites
+
+Make sure you have `uv` (Python package manager) installed before proceeding.  
+
+```bash
+uv --version
+```
+
+If you don't have `uv` installed, you can install it with:  
+https://github.com/astral-sh/uv
 
 ## Installation
 
-1) **Clone the Repository**
+#### 1. Clone the repository
 ```bash
 git clone https://github.com/wandperson/simple-rag-chatbot.git
 cd simple-rag-chatbot
 ```
-2) **Create a Virtual Environment**
 
-On Linux:
+#### 2. Install dependencies
 ```bash
-python3 -m venv .venv
+uv sync --frozen
+```
+
+#### 3. Activate virtual environment
+```bash
 source .venv/bin/activate
-```
-On Windows:
-```powershell
-python -m venv .venv
-.venv\Scripts\activate
-```
-3) **Install Dependencies**
-```bash
-pip install -r requirements.txt
-```
-Or if are planning to do some development and testing:
-```bash
-pip install -r requirements-dev.txt
 ```
 
 ## Usage
 
 **Start the FastAPI Server**
 ```bash
-uvicorn main:app --reload
+uvicorn main:app
 ```
 The Chat UI will be available at:  
 http://127.0.0.1:8000
@@ -67,12 +69,12 @@ http://127.0.0.1:8000/docs for Swagger UI or http://127.0.0.1:8000/redoc
 
 ### **Functionality:**
 Using FastAPI, two APIs were implemented.  
-The first, `/api/ask`, is for answering questions, and the second, `/api/history`, is for displaying previously asked user questions.
+The first, `/api/chat/ask`, is for answering questions, and the second, `/api/chat/history`, is for displaying previously asked user questions.
 
 As a frontend, Jinja2 server-rendered templates were used.  
-On the first page load, the history is automatically rendered in HTML.
+On the root page load, the history is automatically rendered in HTML.
 
-New questions are sent through `/api/ask` to the backend, where an answer is generated using a Retrieval-Augmented Generation approach with `gpt-4o-mini`.
+New questions are sent through `/api/chat/ask` to the backend, where an answer is generated using a Retrieval-Augmented Generation approach with `gpt-4o-mini`.
 
 ### **Database:**
 For now, the app uses flat files to simulate database tables.  
@@ -97,7 +99,6 @@ Services and schemas are isolated from the route logic for clean separation of c
 
 ## Limitations & Trade-Offs
 
-- `requirements.txt` and `requirements-dev.txt` were written manually to explicitly specify the core packages used.
 - Timestamps are not fully implemented.
 - There is no config file, so some settings are hardcoded.
 - There is no error handling.
