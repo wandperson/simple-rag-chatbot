@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 
 # Testing module
-from database import DatabaseOperations
+from app.database import DatabaseOperations
 
 
 @pytest.fixture

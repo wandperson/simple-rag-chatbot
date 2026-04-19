@@ -2,7 +2,7 @@
 from openai import OpenAI
 
 # Custom modules
-from database import DatabaseOperations
+from app.database import DatabaseOperations
 
 
 OPENAI_KEY = ""

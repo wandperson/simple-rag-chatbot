@@ -6,7 +6,7 @@ function sendMessage() {
     if (question === "")
         return;
     
-    fetch("http://127.0.0.1:8000/api/ask", {
+    fetch("/api/chat/ask", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

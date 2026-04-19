@@ -6,8 +6,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
 # Custom modules
-from core.templates import templates
-from services import ChatService
+from app.core.templates import templates
+from app.services import ChatService
 
 
 router = APIRouter()

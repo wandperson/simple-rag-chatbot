@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/css/chat.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='css/chat.css') }}" />
 
     <div id="chat-widget">
         <div id="display-container">
             <ul id="chat-messages">
                 {% for message in chat_messages %}
                     <li class="message-item message-item-{{ message.role }}">
-                        <p>{{ message.content }}</p>
+                        <p>{{ message.content | safe }}</p>
                         <small id="message-time">{{ message.timestamp }}</small>
                     </li>
                 {% endfor %}
@@ -21,5 +21,5 @@
         </div>
     </div>
     
-    <script type="text/javascript" src="{{ url_for('static', path='/js/chat.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', path='js/chat.js') }}"></script>
 {% endblock %}

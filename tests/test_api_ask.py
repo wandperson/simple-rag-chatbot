@@ -5,8 +5,8 @@ from fastapi.testclient import TestClient
 import pytest
 
 # Testing module
-from main import app
-from services import ChatService
+from app.main import app
+from app.services import ChatService
 
 
 client = TestClient(app)
@@ -27,7 +27,7 @@ def mock_get_answer(monkeypatch):
 def test_api_ask_endpoint_returns_valid_response(mock_get_answer):
     payload = {"content": "Hi there!"}
 
-    response = client.post("/api/ask", json=payload)
+    response = client.post("/api/chat/ask", json=payload)
     assert response.status_code == 200
 
     data = response.json()
