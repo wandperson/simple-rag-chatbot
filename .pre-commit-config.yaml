@@ -23,7 +23,7 @@ repos:
 
     - id: pytest
       name: pytest
-      entry: uv run python3 -m pytest
+      entry: uv run pytest
       language: system
       types: [python]
       always_run: true
