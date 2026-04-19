@@ -9,25 +9,21 @@ import pytest
 from database import DatabaseOperations
 
 
-
 @pytest.fixture
 def mock_database():
     database = DatabaseOperations()
-    
-    database.df_context_table = pd.DataFrame({
-        "vector": [
-            np.array([1.0, 0.0]),
-            np.array([0.0, 1.0]),
-            np.array([0.5, 0.5])
-        ],
-        "paragraph": [
-            "Paragraph A",
-            "Paragraph B",
-            "Paragraph C"
-        ]
-    })
-    return database
 
+    database.df_context_table = pd.DataFrame(
+        {
+            "vector": [
+                np.array([1.0, 0.0]),
+                np.array([0.0, 1.0]),
+                np.array([0.5, 0.5]),
+            ],
+            "paragraph": ["Paragraph A", "Paragraph B", "Paragraph C"],
+        }
+    )
+    return database
 
 
 def test_retrieve_context_with_vector_A(mock_database):
@@ -36,6 +32,7 @@ def test_retrieve_context_with_vector_A(mock_database):
     assert "Paragraph A" in result
     assert "Paragraph C" in result
     assert result.index("Paragraph A") < result.index("Paragraph C")
+
 
 def test_retrieve_context_with_vector_B(mock_database):
     test_vector = [0.0, 1.0]

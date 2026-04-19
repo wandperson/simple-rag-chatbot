@@ -7,7 +7,6 @@ from routes import home
 from routes import api
 
 
-
 app = FastAPI()
 
 

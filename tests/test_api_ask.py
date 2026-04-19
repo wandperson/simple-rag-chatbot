@@ -6,11 +6,11 @@ import pytest
 
 # Testing module
 from main import app
-from services import ChatService 
-
+from services import ChatService
 
 
 client = TestClient(app)
+
 
 @pytest.fixture
 def mock_get_answer(monkeypatch):
@@ -20,8 +20,8 @@ def mock_get_answer(monkeypatch):
             "content": "<dynamic response>",
             "timestamp": "<not implemented>",
         }
-    monkeypatch.setattr(ChatService, "get_answer", fake_get_answer)
 
+    monkeypatch.setattr(ChatService, "get_answer", fake_get_answer)
 
 
 def test_api_ask_endpoint_returns_valid_response(mock_get_answer):
