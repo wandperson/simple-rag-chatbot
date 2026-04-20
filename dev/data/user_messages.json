@@ -1,0 +1,22 @@
+[
+    {
+        "role": "user",
+        "content": "Hello",
+        "timestamp": "2026-04-18T14:43:02Z"
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, how can I help you?",
+        "timestamp": "2026-04-18T14:43:04Z"
+    },
+    {
+        "role": "user",
+        "content": "Need help with a leave request.",
+        "timestamp": "2026-04-18T14:43:17Z"
+    },
+    {
+        "role": "assistant",
+        "content": "Employees request time off using the NestHR portal by navigating to the \u201cLeave & Availability\u201d tab. Requests must be submitted at least 10 days in advance.",
+        "timestamp": "2026-04-18T14:43:21Z"
+    }
+]
