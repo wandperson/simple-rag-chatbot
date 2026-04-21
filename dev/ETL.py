@@ -76,7 +76,8 @@ def db():
 
 def create_datastore() -> None:
     # Rewrite the DB every run
-    DB_PATH.unlink()
+    if DB_PATH.exists():
+        DB_PATH.unlink()
 
     # Create the tables
     with db() as conn:

@@ -1,6 +1,5 @@
 # Basic
 from enum import Enum
-from typing import Optional
 
 # Data Validation
 from pydantic import BaseModel, Field
@@ -17,7 +16,7 @@ class MessageBase(BaseModel):
 
 class Message(MessageBase):
     role: Role = Field(..., description="Sender of the message")
-    timestamp: Optional[str] = Field(
+    timestamp: str | None = Field(
         default=None, description="When the message was sended in ISO 8601 format"
     )
 

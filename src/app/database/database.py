@@ -1,7 +1,6 @@
 # Basic
 from pathlib import Path
-import json
-from typing import Optional
+import sqlite3
 
 # Data Manipulation
 import pandas as pd
@@ -21,43 +20,35 @@ class DatabaseOperations:
         df_user_table (pd.DataFrame): DataFrame of user message history.
     """
 
-    def __init__(self) -> None:
-        self.df_context_table = pd.read_json(
-            MAIN_DIR / "context_data.json", orient="records"
-        )
-        try:
-            self.df_user_table = pd.read_json(
-                MAIN_DIR / "user_data.json", orient="records", lines=True
-            )
-        except FileNotFoundError:
-            df = pd.DataFrame(columns=["role", "content"])
-            self.df_user_table = df
+    def __init__(self, connection: sqlite3.Connection) -> None:
+        self.conn = connection
 
-    def read_context_table(self) -> list[dict]:
-        """
-        Reads the context table and returns the data as a list of dictionaries.
+    # def read_context_table(self) -> list[dict]:
+    #     """
+    #     Reads the context table and returns the data as a list of dictionaries.
 
-        Returns:
-            list[dict]: A list of dictionaries representing data used for RAG.
-        """
-        json_str = self.df_context_table.to_json(orient="records")
-        return json.loads(json_str)
+    #     Returns:
+    #         list[dict]: A list of dictionaries representing data used for RAG.
+    #     """
+    #     json_str = self.df_context_table.to_json(orient="records")
+    #     return json.loads(json_str)
 
     def insert_message(self, row: dict) -> None:
         """
         Inserts a new message into the memory user table and saves it to DB.
         """
-        self.df_user_table.loc[len(self.df_user_table)] = row
-
-        # SSD-friendly writes
-        with open(MAIN_DIR / "user_data.json", "a", encoding="utf-8") as f:
-            f.write(json.dumps(row) + "\n")
-        # self.df_user_table.to_json(MAIN_DIR / "user_data.json",
-        #                            orient="records",
-        #                            lines=True)
+        cursor = self.conn.cursor()
+        cursor.execute(
+            "INSERT INTO messages (role, content) VALUES (?, ?)",
+            (row["role"], row["content"]),
+        )
+        self.conn.commit()
 
     def select_history(self):
-        return self.df_user_table.to_dict(orient="records")
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT role, content FROM messages")
+        rows = [dict(row) for row in cursor.fetchall()]
+        return rows
 
     def select_llm_instructions(self) -> list[str]:
         instructions = [
@@ -69,7 +60,7 @@ class DatabaseOperations:
         ]
         return instructions
 
-    def retrieve_context(self, vector: Optional[list[float]] = None) -> str:
+    def retrieve_context(self, vector: list[float], limit: int = 2) -> str:
         """
         Retrieve the two most relevant context paragraphs based on cosine similarity.
 
@@ -80,17 +71,23 @@ class DatabaseOperations:
         Returns:
             str: Concatenated string of the top 2 most similar paragraphs.
         """
+        embedding = np.array(vector).reshape(1, -1)
 
-        emmbedding = vector if vector else np.random.rand(512).tolist()
-        emmbedding = np.array(emmbedding).reshape(1, -1)
+        df_articles = pd.read_sql_query(
+            "SELECT * FROM articles",
+            self.conn,
+        )
+        df_articles["vector_numpy"] = pd.Series(
+            [np.frombuffer(x, dtype=np.float32) for x in df_articles["vector"]]
+        )
 
-        df_data = self.df_context_table
+        vector_matrix = np.vstack(df_articles["vector_numpy"].tolist())
 
-        vector_matrix = np.vstack(df_data["vector"].tolist())
-        similarities = cosine_similarity(emmbedding, vector_matrix).flatten()
+        similarities = cosine_similarity(embedding, vector_matrix).flatten()
+        df_articles["similarity"] = similarities
 
-        df_data["similarity"] = similarities
-
-        relevant_context = df_data.sort_values(by="similarity", ascending=False).head(2)
+        relevant_context = df_articles.sort_values(
+            by="similarity", ascending=False
+        ).head(limit)
 
         return "\n".join(relevant_context["paragraph"].astype(str).tolist())
