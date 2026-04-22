@@ -55,7 +55,7 @@ uv run uv pip install -e .
 
 #### 4. Start the FastAPI Server
 ```bash
-uv run uvicorn main:app
+uv run uvicorn app.main:app
 ```
 The Chat UI will be available at:  
 http://127.0.0.1:8000
