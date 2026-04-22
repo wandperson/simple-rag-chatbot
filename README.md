@@ -1,11 +1,11 @@
 # Simple-RAG-chatbot
 
-![alt text](assets/chat_example.png)
+![alt text](docs/assets/chat_example.png)
 
 ## Table of Contents
 
 1. [About](#about)
-2. [Installation](#installation)
+2. [Prerequisites](#prerequisites)
 3. [Usage](#usage)
 4. [How it works](#how-it-works)
     - [APIs & Functionality](#functionality)
@@ -14,48 +14,48 @@
     - [Language Model Integration](#language-model-integration)
     - [Modular Design](#modular-design)
 5. [Limitations & Trade-Offs](#limitations--trade-offs)
+    - [Flexibility](#flexibility)
 6. [Development](#development)
     - [Testing](#testing)
 
 ## About
 
-A FastAPI backend with a server-rendered frontend (Jinja2) for an AI assistant that can perform contextual retrieval (RAG).
+FastAPI backend with server-side rendered UI (Jinja2 templates) and contextual retrieval (RAG) for an AI assistant.
 
-The project serves as a personal playground to explore end-to-end web application design and the integration of AI/ML into real-world applications, highlighting practical Python and AI/ML experience.
+An end-to-end FastAPI application integrating a server-rendered interface with a retrieval-augmented AI system (RAG), demonstrating practical experience in Python backend development and applied AI/ML systems design.
 
-## Installation
+## Prerequisites
 
-1) **Clone the Repository**
+Make sure you have `uv` (Python package manager) installed before proceeding.  
+
+```bash
+uv --version
+```
+
+If you don't have `uv` installed, you can install it with:  
+https://github.com/astral-sh/uv
+
+## Usage
+
+#### 1. Clone the repository
 ```bash
 git clone https://github.com/wandperson/simple-rag-chatbot.git
 cd simple-rag-chatbot
 ```
-2) **Create a Virtual Environment**
 
-On Linux:
+#### 2. Install virtual environment with dependencies
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-On Windows:
-```powershell
-python -m venv .venv
-.venv\Scripts\activate
-```
-3) **Install Dependencies**
-```bash
-pip install -r requirements.txt
-```
-Or if are planning to do some development and testing:
-```bash
-pip install -r requirements-dev.txt
+uv sync --frozen --no-dev
 ```
 
-## Usage
-
-**Start the FastAPI Server**
+#### 3. Install the package in editable mode
 ```bash
-uvicorn main:app --reload
+uv run uv pip install -e .
+```
+
+#### 4. Start the FastAPI Server
+```bash
+uv run uvicorn main:app
 ```
 The Chat UI will be available at:  
 http://127.0.0.1:8000
@@ -67,20 +67,18 @@ http://127.0.0.1:8000/docs for Swagger UI or http://127.0.0.1:8000/redoc
 
 ### **Functionality:**
 Using FastAPI, two APIs were implemented.  
-The first, `/api/ask`, is for answering questions, and the second, `/api/history`, is for displaying previously asked user questions.
+The first, `/api/chat/ask`, is for answering questions, and the second, `/api/chat/history`, is for displaying previously asked user questions.
 
 As a frontend, Jinja2 server-rendered templates were used.  
-On the first page load, the history is automatically rendered in HTML.
+On the root page load, the history is automatically rendered in HTML.
 
-New questions are sent through `/api/ask` to the backend, where an answer is generated using a Retrieval-Augmented Generation approach with `gpt-4o-mini`.
+New questions are sent through `/api/chat/ask` to the backend, where an answer is generated using a Retrieval-Augmented Generation approach with `gpt-4o-mini` if openAI API key is provided.
 
 ### **Database:**
-For now, the app uses flat files to simulate database tables.  
-The `database/context_data.json` file contains relevant company information with generated vectors.  
-The `.dev` folder contains an ETL procedure to collect data from a list of files and generate relevant embeddings using `text-embedding-3-small`.  
-The `database/user_data.json` file contains the history of user asked questions.  
-The `database/database.py` file includes a class *DatabaseOperations* that simulates a connection to a database.  
-If inherit from this class and override its methods with a real database connection, all functionality will work the same way.
+The app uses SQLite for data storage.  
+The `articles` table contains relevant company information with generated vectors.  
+The `dev` folder contains an ETL procedure to collect data from a list of files and generate fresh new database instances.  
+The `messages` table contains the user's chat history with bot.
 
 ### **Retrieval-Augmented Generation:**  
 For retrieval, a vector cosine similarity approach is used.  
@@ -89,7 +87,7 @@ With this approach, the prompt includes the top-2 context chunks.
 
 ### **Language Model Integration:**  
 The prompt sent to the LLM includes both the instructions and context chunks.  
-If `include_history` is `True`, previous user messages are also included in the prompt.  
+If `include_history` sended to endpoint as parameter is set to `True`, previous user messages are also included in the prompt.  
 By default, this is set to `False`, but it can be changed as parameter when calling the `/api/ask` endpoint.
 
 ### **Modular Design:**  
@@ -97,37 +95,34 @@ Services and schemas are isolated from the route logic for clean separation of c
 
 ## Limitations & Trade-Offs
 
-- `requirements.txt` and `requirements-dev.txt` were written manually to explicitly specify the core packages used.
 - Timestamps are not fully implemented.
 - There is no config file, so some settings are hardcoded.
 - There is no error handling.
 - There is no logging.
 - Testing is limited by three test cases.
-- There are some UI issues that can be improved.
-- If need delete history, need to delete `user_data.json` file.
-- Not all functions, modules, classes, etc. are properly documented.
-
-***
-
-## Development
-
-### Testing
-
-Run All Tests with `pytest`:  
-On Linux:
-```bash
-python3 -m pytest tests/
-```
-On Windows:
-```powershell
-python -m pytest tests/
-```
+- If need delete history, need to manualy replace database file.
+- Not all functions, modules, classes, etc. are properly commented.
 
 #### Flexibility
 The app can run even **without an OpenAI API key**.\
 In this case, instead of real vectors, it uses pseudo-random vector generation with `numpy`. This makes it easy to test, experiment, and understand how the app works.
 
 When you're ready for full LLM + RAG functionality, just add in a real API key:  
-1. Run `dev/ETL.py` with a valid key to generate a new `context_data.json` inside the `.dev` folder.  
+1. Run `dev/ETL.py` with a valid key to generate a new database with proper vectors.  
 2. Move that file into the `database/` folder to replace the old one.  
 3. Add your OpenAI API key in `chat_service.py`.
+
+***
+***
+
+<!-- 
+## Development
+
+### Testing
+
+Run All Tests with `pytest`:  
+```bash
+uv run pytest
+``` -->
+
+

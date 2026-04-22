@@ -1,5 +1,0 @@
-# Include production packages
--r requirements.txt
-
-# Testing
-pytest

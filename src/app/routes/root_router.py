@@ -1,0 +1,30 @@
+# Basic
+from datetime import datetime
+
+# Backend
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse
+
+# Custom modules
+from app.core.templates import templates
+from app.dependencies import get_chat_service
+from app.services import ChatService
+
+
+router = APIRouter()
+
+
+@router.get("/", response_class=HTMLResponse)
+def index_page(request: Request, chat_service: ChatService = Depends(get_chat_service)):
+    chat_messages = chat_service.get_user_history()
+
+    for message in chat_messages:
+        message["content"] = message["content"]
+
+    for message in chat_messages:  # datetime.now(timezone.utc)
+        message["timestamp"] = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S")
+
+    context = {"chat_messages": chat_messages}
+    return templates.TemplateResponse(
+        request=request, name="index.html", context=context
+    )

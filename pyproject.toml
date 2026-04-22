@@ -1,0 +1,57 @@
+[project]
+name = "simple-rag-chatbot"
+version = "0.2.0"
+description = "AI-enabled web app using FastAPI with contextual retrieval via RAG."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    # Web Framework & Server
+    "fastapi>=0.136.0",
+    "uvicorn>=0.44.0",
+    # Request Parsing
+    "python-multipart>=0.0.22",
+    # Frontend
+    "jinja2>=3.1.6",
+    # Data Processing
+    "pandas>=3.0.2",
+    "numpy>=2.4.4",
+    # AI & RAG
+    "openai>=2.32.0",
+    "scikit-learn>=1.8.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[dependency-groups]
+# Local Development
+dev = [
+    { include-group = "linting" },
+    { include-group = "type_checking" },
+    { include-group = "testing" },
+    # CI tools
+    "pre-commit>=4.5.1",
+]
+
+# Linting, formatting
+linting = [
+    "ruff>=0.15.6",
+]
+
+# Type checking
+type_checking = [
+    "mypy>=1.19.1",
+    "types-passlib>=1.7.7.20260211",
+    "pandas-stubs>=3.0.0.260204",
+]
+
+# Testing
+testing = [
+    "httpx>=0.28.1",
+    "pytest>=9.0.2",
+    "pytest-mock>=3.15.1",
+]
+
+[[tool.mypy.overrides]]
+module = ["sklearn", "sklearn.*"]
+ignore_missing_imports = true

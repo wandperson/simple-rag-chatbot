@@ -1,0 +1,21 @@
+* {
+    box-sizing: border-box;
+
+    margin: 0;
+    padding: 0;
+}
+
+ body {
+    display: flex;
+    justify-content: center;
+    
+    background-color: #4d2689;
+}
+
+#wrapper {
+    width: 896px;
+    height: 100vh;
+    padding: 20px 60px;
+
+    background-color: white;
+}

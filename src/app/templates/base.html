@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='favicon.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='css/base.css') }}" />
+    <title>AI-Assistant</title>
+</head>
+<body>
+    <div id="wrapper">
+        {% block body %}
+
+        {% endblock %}
+    </div>
+</body>
+</html>
